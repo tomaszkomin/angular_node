@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PostCreateComponent } from './posts/post-create/post-create.component';
+import { MatFormField } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { PostCreateComponent } from './posts/post-create/post-create.component';
   imports: [
     BrowserModule,
     FormsModule,
+    MatFormField,
     AppRoutingModule,
     MatInputModule,
     MatCardModule
