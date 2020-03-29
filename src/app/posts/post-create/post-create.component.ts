@@ -1,15 +1,33 @@
-import { Component } from '@angular/core';
-
+import { Component, EventEmitter , Output} from '@angular/core';
+import { PostModel } from './../post.model'
+import { NgForm } from '@angular/forms';
+import { PostService } from './../post.service';
 @Component({
   templateUrl: './post-create.component.html',
-  selector: 'app-post-create'
+  selector: 'app-post-create',
+  styleUrls : [ './post-create.component.sass']
 })
-export class PostCreateComponent{
-  public newPost:string = 'NO CONTENT';
-  public enteredValue: string;//from double binding
+  export class PostCreateComponent {
 
-  public onAddPost(postInput: HTMLTextAreaElement){
-    console.log(postInput)
-    this.newPost = this.enteredValue;
+  public enteredContent:string  = '';
+  public enteredTitle = '';
+  public error = '';
+
+  constructor(
+      private postsService: PostService
+  ){};
+  public onAddPost(postInputForm: NgForm) {
+    console.log(postInputForm);
+    if(!postInputForm.valid){
+      this.error = "Form invalid"
+      console.log('form invalid');
+      return;
+    }
+    const post: PostModel = {
+      title: postInputForm.value.title,
+      content : postInputForm.value.content
+    }
+    this.postsService.addPost(post);
+    //this.postCreated.emit(post);
   }
 }
