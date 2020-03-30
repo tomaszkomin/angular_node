@@ -7,21 +7,22 @@
             matInput
             ngModel
             required
+            placeholder=" Type Title"
             type="text">
             <mat-error *ngIf="title.invalid">TITLE ERORR: tilte is missing</mat-error>
       </mat-form-field>
-      <br>
       <mat-form-field>
-        <textarea
+        <textarea rows="3"
           #content="ngModel"
           matInput
           ngModel
           required
+          minlength = "3"
+          placeholder=" Type Content..."
           name="content">
         </textarea>
         <mat-error *ngIf="content.invalid">CONTENT ERORR: content is missing</mat-error>
       </mat-form-field>
-      <br>
       <button
         mat-flat-button
         color="primary"
