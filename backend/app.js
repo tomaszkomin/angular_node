@@ -11,11 +11,11 @@ mongoose.connect(CONNECTION_STRING,{
 }).then(()=>{
   console.log('CONNECTED');
 }).catch((error) => {
-  console.log("CONNENCTION TO MONGO DB ERROR 43");
-  console.log(error);
+  console.log("CONNENCTION TO MONGO DB ERROR 413");
 })
 
 app.use((req,res,next)=>{
+  console.log("CORS SETUP");
   res.setHeader('Access-Control-Allow-Origin','*');
 	res.setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept');
 	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
@@ -25,16 +25,20 @@ app.use((req,res,next)=>{
 app.use(bodyParser.json());
 
 app.post('/api/posts', (req, res, next) => {
+  console.log(req);
 	const posts = req.body;
 	const post = new Post({
 		title: posts.title,
 		content: posts.content
-	});
-  console.log(post);
-  post.save();
-	res.status(201).json({
-		message: "post request sendt"
-	});
+  });
+
+  post.save().then((result) => {
+    console.log(result);
+    res.status(201).json({
+      message: "post added success!!!",
+      postId: result._id
+    });
+  });
 })
 
 app.get('/api/posts', (req, res, next)=>{
@@ -48,7 +52,10 @@ app.get('/api/posts', (req, res, next)=>{
 });
 
 app.delete("/api/posts/:id", (req,res,next) => {
-  console.log(req.params.id);
-  req.status(200);
+  Post.deleteOne( {_id:req.params.id} ).then(() => {
+    console.log("POST DELETED");
+    res.status(200).json({message: "Post Deleted app.js "});
+  })
 });
+
 module.exports = app;
