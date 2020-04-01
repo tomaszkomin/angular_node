@@ -24,7 +24,6 @@ import { PostService } from './../post.service';
       return;
     }
     const post: PostModel = {
-      id: Math.random()*10000000,
       title: postInputForm.value.title,
       content : postInputForm.value.content
     }

@@ -1,46 +1,54 @@
+const CONNECTION_STRING = 'mongodb+srv://tomaszkomin:dupadupa123@cluster0-2e7xh.mongodb.net/mean_course_database_app?retryWrites=true&w=majority';
 const express = require('express');
-//console.log(express);
-const app = express();
+const mongoose = require('mongoose');
 const bodyParser= require('body-parser');
+const Post = require('./models/post');
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded())
-
+const app = express();
+mongoose.connect(CONNECTION_STRING,{
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(()=>{
+  console.log('CONNECTED');
+}).catch((error) => {
+  console.log("CONNENCTION TO MONGO DB ERROR 43");
+  console.log(error);
+})
 
 app.use((req,res,next)=>{
   res.setHeader('Access-Control-Allow-Origin','*');
-  res.setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept');
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
-  console.log(res);
-  next();
+	res.setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept');
+	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+	next();
 })
+
+app.use(bodyParser.json());
 
 app.post('/api/posts', (req, res, next) => {
-  const posts = req.body;
-  console.log('ADD  POST REQUEST FROM EXPRESS');
-  console.log(posts);
-  res.status(201).json({
-    message: "post request sendt"
-  });
+	const posts = req.body;
+	const post = new Post({
+		title: posts.title,
+		content: posts.content
+	});
+  console.log(post);
+  post.save();
+	res.status(201).json({
+		message: "post request sendt"
+	});
 })
 
-app.use('/api/posts', (req, res, next)=>{
-  const posts = [
-    {
-      id:1,
-      title:"TITLE FROM NODEMON",
-      content:"CONTENT FROM NODEMON"
-    },
-    {
-      id:2,
-      title:"2nd TITLE FROM NODE 2",
-      content:"2nd CONTENT FROM NODE 2"
-    }
-  ]
-  res.status(200).json({
-    message: "Send rom nopde app.js",
-    posts: posts
+app.get('/api/posts', (req, res, next)=>{
+	Post.find().then( (documents) => {
+    console.log(documents);
+    res.status(200).json({
+      message: "Send rom nopde app.js",
+      posts: documents
+    })
   })
 });
 
+app.delete("/api/posts/:id", (req,res,next) => {
+  console.log(req.params.id);
+  req.status(200);
+});
 module.exports = app;
