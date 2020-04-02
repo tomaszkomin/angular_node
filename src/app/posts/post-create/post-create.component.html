@@ -9,8 +9,9 @@
             required
             placeholder=" Type Title"
             type="text">
-            <mat-error *ngIf="title.invalid">TITLE ERORR: tilte is missing</mat-error>
+        <mat-error *ngIf="title.invalid">TITLE ERORR: tilte is missing</mat-error>
       </mat-form-field>
+      <mat-divider></mat-divider>
       <mat-form-field>
         <textarea rows="3"
           #content="ngModel"
@@ -23,7 +24,6 @@
         </textarea>
         <mat-error *ngIf="content.invalid">CONTENT ERORR: content is missing</mat-error>
       </mat-form-field>
-      <mat-divider></mat-divider>
       <button
         mat-flat-button
         color="primary"

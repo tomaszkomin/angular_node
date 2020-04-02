@@ -18,14 +18,13 @@ app.use((req,res,next)=>{
   console.log("CORS SETUP");
   res.setHeader('Access-Control-Allow-Origin','*');
 	res.setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept');
-	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
 	next();
 })
 
 app.use(bodyParser.json());
 
 app.post('/api/posts', (req, res, next) => {
-  console.log(req);
 	const posts = req.body;
 	const post = new Post({
 		title: posts.title,
@@ -33,9 +32,8 @@ app.post('/api/posts', (req, res, next) => {
   });
 
   post.save().then((result) => {
-    console.log(result);
     res.status(201).json({
-      message: "post added success!!!",
+      message: "Post added success!!!",
       postId: result._id
     });
   });
@@ -43,7 +41,6 @@ app.post('/api/posts', (req, res, next) => {
 
 app.get('/api/posts', (req, res, next)=>{
 	Post.find().then( (documents) => {
-    console.log(documents);
     res.status(200).json({
       message: "Send rom nopde app.js",
       posts: documents
@@ -54,7 +51,7 @@ app.get('/api/posts', (req, res, next)=>{
 app.delete("/api/posts/:id", (req,res,next) => {
   Post.deleteOne( {_id:req.params.id} ).then(() => {
     console.log("POST DELETED");
-    res.status(200).json({message: "Post Deleted app.js "});
+    res.status(200).json({message: "Post Deleted"});
   })
 });
 
