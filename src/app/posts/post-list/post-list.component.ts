@@ -8,13 +8,14 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./post-list.component.sass']
 })
 export class PostListComponent implements OnInit {
-
+    public isLoading = false;
     public posts: PostModel[] = [];
     private subscription: Subscription;
     constructor(
       private postsService: PostService
     ) {};
     ngOnInit(): void {
+      this.isLoading = true;
       this.postsService.getPosts();
       this.subscription = this.postsService.getPostUpdateListener()
         .subscribe((posts: PostModel[]) => this.posts = posts );

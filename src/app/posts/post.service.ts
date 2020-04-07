@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { PostModel } from './post.model';
 import { Subject} from 'rxjs';
 import { environment } from './../../environments/environment';
+import { Router } from '@angular/router';
 const API_URL = environment.api_url + '/posts/';
 
 @Injectable({
@@ -14,7 +15,8 @@ export class PostService {
 	private postsUpdated$ = new Subject<PostModel[]>();
 
 	constructor(
-		private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private router: Router
 	){}
 
 	public getPosts(){
@@ -40,10 +42,10 @@ export class PostService {
         post.id = id;
         this.posts.push(post);
         this.postsUpdated$.next([...this.posts])
+        this.router.navigate(['/']);
       })
   }
   public updatePost(post: PostModel){
-    console.log(post);
     const id = post.id;
     this.httpClient.put(API_URL + id , post)
       .subscribe((result) => {
@@ -51,7 +53,8 @@ export class PostService {
         const updatedIndex = updatedPosts.findIndex( updatedPost => updatedPost.id === id);
         updatedPosts[updatedIndex] = post;
         this.posts = updatedPosts;
-        this.postsUpdated$.next([...this.posts])
+        this.postsUpdated$.next([...this.posts]);
+        this.router.navigate(['/']);
       })
   }
   public deletePost(postId : string ){

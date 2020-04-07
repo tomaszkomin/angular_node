@@ -12,7 +12,8 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 export class PostCreateComponent implements OnInit {
 
   public error = '';
-  public  post: PostModel;
+  public isLoading = false;
+  public post: PostModel;
 
   private mode = "create"; //create or edit
   private postId: string;
@@ -28,10 +29,12 @@ export class PostCreateComponent implements OnInit {
       if( paramMap.has('postId')){
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
+        this.isLoading = true;
         this.postsService.getPost(this.postId).subscribe( (res: {message:string , post: {_id:string , title:  string , content : string}}) => {
           const postFromDB = res.post;
           this.post = { id: postFromDB._id , title: postFromDB.title , content : postFromDB.content}
         });
+        this.isLoading = false;
       }
       else{
         this.mode = 'create';
@@ -44,11 +47,11 @@ export class PostCreateComponent implements OnInit {
       this.error = "Form invalid post.create.44"
       return;
     }
+    this.isLoading = true;
     const post = {
       title: postInputForm.value.title,
       content : postInputForm.value.content
     }
-    console.log(post);
     if (this.mode === 'create'){
       this.postsService.addPost(post);
     }
@@ -56,6 +59,6 @@ export class PostCreateComponent implements OnInit {
       this.postsService.updatePost({...post, id:this.postId});
     }
     postInputForm.resetForm();
-    this.router.navigate(['/']);
+    this.isLoading = false;
   }
 }
