@@ -33,20 +33,28 @@ export class PostService {
       });
 	}
 	public addPost(post: PostModel){
+    console.log(post);
     this.httpClient.post<{ message: string , postId: string}>(API_URL, post)
       .subscribe((response) => {
-        console.log(response);
         const id = response.postId;
         post.id = id;
         this.posts.push(post);
         this.postsUpdated$.next([...this.posts])
       })
   }
-	public getPostUpdateListener(){
-    return this.postsUpdated$.asObservable();
-	}
-  public deletePost( postId : string ){
-
+  public updatePost(post: PostModel){
+    console.log(post);
+    const id = post.id;
+    this.httpClient.put(API_URL + id , post)
+      .subscribe((result) => {
+        const updatedPosts = [...this.posts];
+        const updatedIndex = updatedPosts.findIndex( updatedPost => updatedPost.id === id);
+        updatedPosts[updatedIndex] = post;
+        this.posts = updatedPosts;
+        this.postsUpdated$.next([...this.posts])
+      })
+  }
+  public deletePost(postId : string ){
     this.httpClient.delete(API_URL + `${postId}`)
       .subscribe(() => {
         console.log( 'DELETED = ' + API_URL + postId )
@@ -54,6 +62,11 @@ export class PostService {
         this.posts = updatedPosts;
         this.postsUpdated$.next([...this.posts]);
       })
-
+  }
+	public getPostUpdateListener(){
+    return this.postsUpdated$.asObservable();
+  }
+  public getPost(id: string){
+    return this.httpClient.get(API_URL + id);
   }
 }

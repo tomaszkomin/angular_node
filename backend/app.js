@@ -2,7 +2,8 @@ const CONNECTION_STRING = 'mongodb+srv://tomaszkomin:dupadupa123@cluster0-2e7xh.
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser= require('body-parser');
-const Post = require('./models/post');
+
+const postRouters = require('./routes/posts')
 
 const app = express();
 mongoose.connect(CONNECTION_STRING,{
@@ -18,41 +19,11 @@ app.use((req,res,next)=>{
   console.log("CORS SETUP");
   res.setHeader('Access-Control-Allow-Origin','*');
 	res.setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept');
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+	res.setHeader('Access-Control-Allow-Methods', ' GET, POST, PATCH, PUT, DELETE, OPTIONS');
 	next();
 })
 
 app.use(bodyParser.json());
 
-app.post('/api/posts', (req, res, next) => {
-	const posts = req.body;
-	const post = new Post({
-		title: posts.title,
-		content: posts.content
-  });
-
-  post.save().then((result) => {
-    res.status(201).json({
-      message: "Post added success!!!",
-      postId: result._id
-    });
-  });
-})
-
-app.get('/api/posts', (req, res, next)=>{
-	Post.find().then( (documents) => {
-    res.status(200).json({
-      message: "Send rom nopde app.js",
-      posts: documents
-    })
-  })
-});
-
-app.delete("/api/posts/:id", (req,res,next) => {
-  Post.deleteOne( {_id:req.params.id} ).then(() => {
-    console.log("POST DELETED");
-    res.status(200).json({message: "Post Deleted"});
-  })
-});
-
+app.use("/api/posts/",postRouters);
 module.exports = app;
