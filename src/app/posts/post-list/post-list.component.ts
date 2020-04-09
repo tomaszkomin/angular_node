@@ -18,7 +18,10 @@ export class PostListComponent implements OnInit {
       this.isLoading = true;
       this.postsService.getPosts();
       this.subscription = this.postsService.getPostUpdateListener()
-        .subscribe((posts: PostModel[]) => this.posts = posts );
+        .subscribe( (posts: PostModel[]) => {
+          this.posts = posts;
+          this.isLoading = false;
+        });
     }
     ngOnDestroy(): void {
       this.subscription.unsubscribe();

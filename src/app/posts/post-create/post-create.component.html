@@ -1,37 +1,35 @@
+
 <mat-card>
   <mat-spinner *ngIf="isLoading"></mat-spinner>
-	<form #postForm="ngForm" (submit)="onSavePost(postForm)">
+	<form [formGroup]="form" (submit)="onSavePost()" >
 		<mat-form-field>
         <input
-            #title="ngModel"
-            name="title"
+            formControlName="title"
             matInput
-            [ngModel]="post?.title"
-            required
-            placeholder=" Type Title"
             type="text">
-        <mat-error *ngIf="title.invalid">TITLE ERORR: tilte is missing</mat-error>
+        <mat-error *ngIf="form.get('title').invalid">TITLE ERORR: tilte is missing</mat-error>
       </mat-form-field>
-      <mat-divider></mat-divider>
       <mat-form-field>
-        <textarea rows="3"
-          #content="ngModel"
-          matInput
-          [ngModel]="post?.content"
-          required
-          minlength = "3"
-          placeholder=" Type Content..."
-          name="content">
+        <textarea
+          formControlName="content"
+          rows="3"
+          matInput>
         </textarea>
-        <mat-error *ngIf="content.invalid">CONTENT ERORR: content is missing</mat-error>
+        <mat-error *ngIf="form.get('content').invalid">CONTENT ERORR: content is missing</mat-error>
       </mat-form-field>
+      <div>
+        <button mat-stroked-button type="button" (click)="filePickerInput.click()">Add Image</button>
+        <input type="file" #filePickerInput (change)="onImageSet($event)">
+      </div>
+      <div class="image-preview" *ngIf="imageUrlEncoded && form.get('image').valid">
+        <img [src]="imageUrlEncoded" [alt]="form.get('title').value">
+      </div>
       <button
           mat-flat-button
           color="primary"
           type="submit">
         Save Post
       </button>
-    <mat-error *ngIf="postForm.status!=='VALID'">{{error}}</mat-error>
+    <mat-error *ngIf="this.form.status !== 'VALID'">{{error}}</mat-error>
 	</form>
 </mat-card>
-

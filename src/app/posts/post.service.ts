@@ -35,7 +35,6 @@ export class PostService {
       });
 	}
 	public addPost(post: PostModel){
-    console.log(post);
     this.httpClient.post<{ message: string , postId: string}>(API_URL, post)
       .subscribe((response) => {
         const id = response.postId;

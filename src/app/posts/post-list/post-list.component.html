@@ -19,7 +19,7 @@
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
-<p *ngIf="posts.length <= 0 && !isLoading" class="info-text body-1">
+<p *ngIf="posts.length <= 0 || isLoading" class="info-text body-1">
   <mat-spinner></mat-spinner>
   Theres no posts here yet. ...
 </p>

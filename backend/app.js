@@ -1,9 +1,10 @@
 const CONNECTION_STRING = 'mongodb+srv://tomaszkomin:dupadupa123@cluster0-2e7xh.mongodb.net/mean_course_database_app?retryWrites=true&w=majority';
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser= require('body-parser');
-
-const postRouters = require('./routes/posts')
+const casual = require('casual');
+const postRouters = require('./routes/posts.routes')
 
 const app = express();
 mongoose.connect(CONNECTION_STRING,{
@@ -11,6 +12,7 @@ mongoose.connect(CONNECTION_STRING,{
   useUnifiedTopology: true
 }).then(()=>{
   console.log('CONNECTED');
+  console.log(casual.city  + ' ' +  casual.country);
 }).catch((error) => {
   console.log("CONNENCTION TO MONGO DB ERROR 413");
 })
@@ -25,5 +27,5 @@ app.use((req,res,next)=>{
 
 app.use(bodyParser.json());
 
-app.use("/api/posts/",postRouters);
+app.use("/api/posts/", postRouters);
 module.exports = app;
