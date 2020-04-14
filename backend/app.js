@@ -3,8 +3,9 @@ const CONNECTION_STRING = 'mongodb+srv://tomaszkomin:dupadupa123@cluster0-2e7xh.
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser= require('body-parser');
+const path = require("path");
 const casual = require('casual');
-const postRouters = require('./routes/posts.routes')
+const postRouters = require('./routes/posts')
 
 const app = express();
 mongoose.connect(CONNECTION_STRING,{
@@ -16,7 +17,9 @@ mongoose.connect(CONNECTION_STRING,{
 }).catch((error) => {
   console.log("CONNENCTION TO MONGO DB ERROR 413");
 })
-
+console.log("PATH");
+console.log(path.join("backend","images"));
+app.use("/images", express.static(path.join("backend","images")));
 app.use((req,res,next)=>{
   console.log("CORS SETUP");
   res.setHeader('Access-Control-Allow-Origin','*');

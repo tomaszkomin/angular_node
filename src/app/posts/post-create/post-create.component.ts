@@ -49,7 +49,8 @@ export class PostCreateComponent implements OnInit {
           this.post = {
              id: postFromDB._id ,
              title: postFromDB.title ,
-             content : postFromDB.content
+			 content : postFromDB.content,
+			 imageUrl :  this.post.imageUrl
           };
           this.form.setValue({
             title: this.post.title,
@@ -70,7 +71,8 @@ export class PostCreateComponent implements OnInit {
     this.isLoading = true;
     const post = {
       title: this.form.value.title,
-      content : this.form.value.content
+	  content : this.form.value.content,
+	  imageUrl : this.form.value.image
     };
     if (this.mode === 'create') {
        this.postsService.addPost(post);
