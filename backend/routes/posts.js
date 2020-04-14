@@ -25,9 +25,6 @@ const storageConfig = multer.diskStorage({
 });
 // addPost
 router.post("", multer({storage:storageConfig}).single("image"), (req, res, next) => {
-	console.log("ADD POST");
-	console.log(req.body);
-	console.log(req.file);
 
 	const url = req.protocol + '://' + req.get("host");
 	const posts = new Posts({
@@ -36,11 +33,7 @@ router.post("", multer({storage:storageConfig}).single("image"), (req, res, next
 		imageUrl: url + '/images/' +  req.file.filename
 
 	});
-	console.log("POST DUMP");
-	console.log(posts);
 	posts.save().then((result) => {
-		console.log("FROM BACKEND SAVE")
-		console.log(result);
 		res.status(201).json({
 			message: "Post added success!!!",
 			post : {
@@ -50,17 +43,24 @@ router.post("", multer({storage:storageConfig}).single("image"), (req, res, next
 		});
 	});
 });
-router.put("/:id", (req, res, next) => {
-	const id = req.body.id;
-	const updatedPost = new Post({
+router.put("/:id", multer({storage:storageConfig}).single("image"), (req, res, next) => {
+
+	let imageUrl = req.body.imageUrl;
+	if(req.file){
+		console.log("REQUEST FILE");
+		const url = req.protocol + '://' + req.get("host");
+		imageUrl = url + "/images/" + req.file.filename;
+	};
+	const id = req.params.id;
+	console.log(imageUrl);
+	const updatedPost = new Posts({
 		_id: id,
 		title: req.body.title,
-		content: req.body.content
+		content: req.body.content,
+		imageUrl: imageUrl
 	})
 	Posts.updateOne( {_id: id}, updatedPost ).then( (result) => {
-		console.log("`Post id: ${id} updated`");
-		console.log(result);
-
+		console.log("Post id: " +id+ "updated");
 		res.status(200).json({
 		message: `Post id: ${id} updated`
 		})

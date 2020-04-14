@@ -28,14 +28,16 @@ export class PostCreateComponent implements OnInit {
 
   public ngOnInit(): void {
     this.form = new FormGroup({
-      title: new FormControl(null, {
-        validators: [Validators.required, Validators.minLength(3)]
-      }),
-      content: new FormControl(null, {validators: [Validators.required]}),
-      image: new FormControl(null , {
-        validators: [Validators.required]
-        // ,asyncValidators : [imageMimeType]
-      })
+		title: new FormControl(null, {
+			validators: [Validators.required, Validators.minLength(3)]
+		}),
+		content: new FormControl(null, {
+			validators: [Validators.required]
+		}),
+		image: new FormControl(null , {
+			validators: [Validators.required]
+			// ,asyncValidators : [imageMimeType]
+		})
     });
 
     this.activatedRoute.paramMap.subscribe( (paramMap: ParamMap) => {
@@ -43,18 +45,19 @@ export class PostCreateComponent implements OnInit {
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
         this.isLoading = true;
-        this.postsService.getPost(this.postId).subscribe( (res: {message: string , post: {_id: string , title: string , content: string}}) => {
+        this.postsService.getPost(this.postId).subscribe( (res: {message: string , post: {_id: string , title: string , content: string, imageUrl:any} }) => {
           this.isLoading = false;
           const postFromDB = res.post;
           this.post = {
              id: postFromDB._id ,
              title: postFromDB.title ,
 			 content : postFromDB.content,
-			 imageUrl :  this.post.imageUrl
+			 imageUrl :  postFromDB.imageUrl
           };
           this.form.setValue({
             title: this.post.title,
-            content : this.post.content
+			content : this.post.content,
+			image : this.post.imageUrl
           });
         });
       } else {

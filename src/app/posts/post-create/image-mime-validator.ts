@@ -1,11 +1,14 @@
 import { AbstractControl } from '@angular/forms';
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, of } from 'rxjs';
 
 export const imageMimeType  = (control: AbstractControl): Promise<{[key: string]: any}> | Observable<{[key: string]: any}> => {
-  let isValid = false;
-  const file = control.value as File;
-  const fileReader = new FileReader();
-  const fileReaderObs = Observable.create((observer: Observer<any>) => {
+	if( typeof(control.value === "string")){
+		return of(null);
+	}
+	let isValid = false;
+  	const file = control.value as File;
+  	const fileReader = new FileReader();
+  	const fileReaderObs = Observable.create((observer: Observer<any>) => {
     fileReader.addEventListener('loadedend', () => {
         const arr = new Uint8Array(fileReader.result as ArrayBuffer).subarray(0, 4);
         let header = '';

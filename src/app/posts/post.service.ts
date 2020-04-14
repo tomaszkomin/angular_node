@@ -61,17 +61,41 @@ export class PostService {
 	}
 	public updatePost(post: PostModel) {
 		const id = post.id;
+		// let postData : PostModel | FormData;
+		let postData : any;
+
+		if( typeof(post.imageUrl) === "object"){
+			postData = new FormData();
+			postData.append("id", post.id);
+			postData.append("title", post.title);
+			postData.append("content", post.content);
+			postData.append("image", post.imageUrl,post.title);
+		} else {
+			postData  = {
+				id: id,
+				title: post.title,
+				content: post.content,
+				imageUrl : post.imageUrl
+			}
+		}
 
 		this.httpClient
-		.put(API_URL + id , post)
-		.subscribe((result) => {
-			const updatedPosts = [...this.posts];
-			const updatedIndex = updatedPosts.findIndex( updatedPost => updatedPost.id === id);
-			updatedPosts[updatedIndex] = post;
-			this.posts = updatedPosts;
-			this.postsUpdated$.next([...this.posts]);
-			this.router.navigate(['/']);
-		});
+			.put(API_URL + id , postData )
+			.subscribe((result) => {
+				const updatedPosts = [...this.posts];
+				const updatedIndex = updatedPosts.findIndex( updatedPost => updatedPost.id === id);
+				console.log(postData)
+				const post: PostModel = {
+					id : postData.id,
+					title : postData.title,
+					content : postData.content,
+					imageUrl : postData.imageUrl
+				}
+				updatedPosts[updatedIndex] = post;
+				this.posts = updatedPosts;
+				this.postsUpdated$.next([...this.posts]);
+				this.router.navigate(['/']);
+			});
 	}
 	public deletePost(postId: string ) {
 		this.httpClient.delete(API_URL + `${postId}`)
