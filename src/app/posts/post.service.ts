@@ -13,27 +13,36 @@ const API_URL = environment.api_url + '/posts/';
 })
 export class PostService {
 	private posts: PostModel[] = [];
-	private postsUpdated$ = new Subject<PostModel[]>();
+	private postsUpdated$ = new Subject<{ posts:PostModel[] , postCount:number }>();
 
 	constructor(
 	private httpClient: HttpClient,
 	private router: Router
 	) {}
 
-	public getPosts() {
-	this.httpClient.get<{ message: string, posts: any }>(API_URL)
-	  .pipe( map((response) => {
-		return response.posts.map( (post) => {
-		  return {
-			...post,
-			id: post._id
-		  };
-		});
-	  }))
-	  .subscribe((posts) => {
-		this.posts = posts;
-		this.postsUpdated$.next([...this.posts]);
-	  });
+	public getPosts( pageSize:number , currentPage:number  ) {
+		const queryParams = `?pageSize=${pageSize}&page=${currentPage}`;
+		this.httpClient.get<{ message: string, posts: any , postCount:number }>(API_URL + queryParams)
+			.pipe(
+				map( response => {
+					return {
+						posts : response.posts.map( (post) => {
+							return {
+								...post,
+								id: post._id
+							}}
+						),
+						postCount: response.postCount
+					}
+				})
+			)
+			.subscribe((postsTransformedResponse) => {
+				this.posts = postsTransformedResponse.posts;
+				this.postsUpdated$.next({posts: [...this.posts] , postCount: postsTransformedResponse.postCount});
+			});
+	}
+	public getPostUpdateListener() {
+		return this.postsUpdated$.asObservable();
 	}
 	public addPost(post: PostModel) {
 		const postData = new FormData();	//allows sendingBLOB
@@ -93,21 +102,12 @@ export class PostService {
 				}
 				updatedPosts[updatedIndex] = post;
 				this.posts = updatedPosts;
-				this.postsUpdated$.next([...this.posts]);
+				this.postsUpdated$.next({posts: [...this.posts] , postCount: 1346});
 				this.router.navigate(['/']);
 			});
 	}
 	public deletePost(postId: string ) {
-		this.httpClient.delete(API_URL + `${postId}`)
-		.subscribe(() => {
-			console.log( 'DELETED = ' + API_URL + postId );
-			const updatedPosts = this.posts.filter((post) =>  post.id !== postId);
-			this.posts = updatedPosts;
-			this.postsUpdated$.next([...this.posts]);
-		});
-	}
-	public getPostUpdateListener() {
-		return this.postsUpdated$.asObservable();
+		return this.httpClient.delete(API_URL + `${postId}`)
 	}
 	public getPost(id: string) {
 		return this.httpClient.get(API_URL + id);

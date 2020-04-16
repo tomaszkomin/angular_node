@@ -7,6 +7,7 @@
 			<button mat-button mat-raised-button [routerLink]="['/edit' , post.id]">
 				Quick edit
 			</button>
+
 		</mat-expansion-panel-header>
 		<div class="post-image">
 			<img [src]="post.imageUrl" [alt]="post.title">
@@ -22,6 +23,15 @@
 		</mat-action-row>
 	</mat-expansion-panel>
 </mat-accordion>
+
+<mat-paginator
+	*ngIf = "posts.length > 0"
+	[length] = "totalSize"
+	([pageSize]) = "pageSize"
+	[pageSizeOptions] = "pageSizeOptions"
+	(page) = "onChangePage($event)">
+</mat-paginator>
+
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 <p *ngIf="posts.length <= 0 || isLoading" class="info-text body-1">
 	Theres no posts here yet. ...

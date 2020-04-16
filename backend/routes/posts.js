@@ -23,7 +23,50 @@ const storageConfig = multer.diskStorage({
 		callback(null, name + '-' + Date.now() + '.' + ext)
 	}
 });
-// addPost
+// get post
+router.get("", (req, res, next) => {
+
+	const pageSize = req.query.pageSize;
+	const currentPage = req.query.page;
+	const postQuery = Posts.find();
+	let fetchedPostsCount;
+	let fetchedDocuments;
+
+	if (pageSize && currentPage) {
+		postQuery
+			.skip(pageSize * (currentPage - 1))
+			.limit(+pageSize);
+	}
+	postQuery
+		.then( (documents) => {
+			fetchedDocuments = documents
+			return Posts.estimatedDocumentCount();
+		})
+		.then((postCount) => {
+			res.status(200).json({
+				message: "POST FETCHED SUCCESS",
+				posts: fetchedDocuments,
+				postCount : postCount
+			})
+		})
+});
+// get post by @id
+router.get("/:id", (req, res, next) =>{
+	Posts.findById(req.params.id).then((post) => {
+	if(post){
+	  res.status(200).json({
+		message: "get post",
+		post: post
+	  })
+	}
+	else{
+	  res.status(404).json({
+		message: "post not found!"
+	  })
+	}
+  })
+})
+// add Post
 router.post("", multer({storage:storageConfig}).single("image"), (req, res, next) => {
 
 	const url = req.protocol + '://' + req.get("host");
@@ -43,16 +86,15 @@ router.post("", multer({storage:storageConfig}).single("image"), (req, res, next
 		});
 	});
 });
+// update Post
 router.put("/:id", multer({storage:storageConfig}).single("image"), (req, res, next) => {
 
 	let imageUrl = req.body.imageUrl;
 	if(req.file){
-		console.log("REQUEST FILE");
 		const url = req.protocol + '://' + req.get("host");
 		imageUrl = url + "/images/" + req.file.filename;
 	};
 	const id = req.params.id;
-	console.log(imageUrl);
 	const updatedPost = new Posts({
 		_id: id,
 		title: req.body.title,
@@ -66,30 +108,6 @@ router.put("/:id", multer({storage:storageConfig}).single("image"), (req, res, n
 		})
 	})
 });
-router.get("", (req, res, next) => {
-	console.log("GET POSTS");
-	Posts.find().then( (documents) => {
-	res.status(200).json({
-	  message: "get posts",
-	  posts: documents
-	})
-  })
-});
-router.get("/:id", (req, res, next) =>{
-	Posts.findById(req.params.id).then((post) => {
-	if(post){
-	  res.status(200).json({
-		message: "get post",
-		post: post
-	  })
-	}
-	else{
-	  res.status(404).json({
-		message: "post not found!"
-	  })
-	}
-  })
-})
 router.delete("/:id", (req,res,next) => {
 	Posts.deleteOne( {_id:req.params.id} ).then(() => {
 		console.log("POST DELETED");
