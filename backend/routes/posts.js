@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer'); //parser for filetype uploads
+const ImageRecognitionApp = require('../api/imageRecognition');
 const Posts = require('../models/post');
 
 const MIIE_TYPE_MAP = {
@@ -70,11 +71,15 @@ router.get("/:id", (req, res, next) =>{
 router.post("", multer({storage:storageConfig}).single("image"), (req, res, next) => {
 
 	const url = req.protocol + '://' + req.get("host");
+	//const tags = [{"tag" : "test tag v1.2"}];
+	let tagsFromImage;
+	const imageRecognition = new ImageRecognitionApp()
+	tagsFromImage = imageRecognition.sendUrl("https://upload.wikimedia.org/wikipedia/commons/1/11/Kanye_West_at_the_2009_Tribeca_Film_Festival.jpg");
 	const posts = new Posts({
 		title: req.body.title,
 		content: req.body.content,
-		imageUrl: url + '/images/' +  req.file.filename
-
+		imageUrl: url + '/images/' +  req.file.filename,
+		tags: tagsFromImage
 	});
 	posts.save().then((result) => {
 		res.status(201).json({

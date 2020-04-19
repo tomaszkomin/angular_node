@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const bodyParser= require('body-parser');
 const path = require("path");
 const casual = require('casual');
-const postRouters = require('./routes/posts')
+const postRouters = require('./routes/posts');
 
 const app = express();
 mongoose.connect(CONNECTION_STRING,{
