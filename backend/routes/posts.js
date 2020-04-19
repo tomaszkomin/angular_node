@@ -71,23 +71,32 @@ router.get("/:id", (req, res, next) =>{
 router.post("", multer({storage:storageConfig}).single("image"), (req, res, next) => {
 
 	const url = req.protocol + '://' + req.get("host");
+	const testImageUrl = "https://i1.jbzd.com.pl/contents/2020/04/normal/MnNQIMU9GylxTcztWMP9b2EpmI23w18x.jpg";
 	//const tags = [{"tag" : "test tag v1.2"}];
 	let tagsFromImage;
 	const imageRecognition = new ImageRecognitionApp()
-	tagsFromImage = imageRecognition.sendUrl("https://upload.wikimedia.org/wikipedia/commons/1/11/Kanye_West_at_the_2009_Tribeca_Film_Festival.jpg");
-	const posts = new Posts({
-		title: req.body.title,
-		content: req.body.content,
-		imageUrl: url + '/images/' +  req.file.filename,
-		tags: tagsFromImage
-	});
-	posts.save().then((result) => {
-		res.status(201).json({
-			message: "Post added success!!!",
-			post : {
-				...result,
-				id: result._id,
-			}
+	console.log("api started");
+	imageRecognition.sendUrl(testImageUrl).end(function (res) {
+		console.log("starting recognition api")
+		if (res.error) throw new Error(res.error);
+		tagsFromImage  = res.body;
+		console.log("tags inside");
+		console.log(tagsFromImage);
+		const posts = new Posts({
+			title: req.body.title,
+			content: req.body.content,
+			imageUrl: url + '/images/' +  req.file.filename,
+			tags: tagsFromImage
+		});
+		console.log(posts);
+		posts.save().then((result) => {
+			res.status(201).json({
+				message: "Post added success!!!",
+				post : {
+					...result,
+					id: result._id,
+				}
+			});
 		});
 	});
 });

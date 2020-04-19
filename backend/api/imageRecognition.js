@@ -1,36 +1,31 @@
 "use strict"
 class imageRecognition {
-
+	req;
+	unirest = require('unirest');;
 	constructor(){
 		this.setup();
 	}
 	setup(){
 		console.log("SETUP+++++++++++++++++++++");
-	}
-	sendUrl(url){
-		console.log("SETUP SENDDDDD URLLLLLLLLLL");
-		const unirest = require('unirest');
-		let req = unirest("POST", "https://microsoft-azure-microsoft-computer-vision-v1.p.rapidapi.com/analyze");
-		req.query({
+		this.req = this.unirest("POST", "https://microsoft-azure-microsoft-computer-vision-v1.p.rapidapi.com/analyze");
+		this.req.query({
 			"visualfeatures": "Tags"
 		});
-		req.headers({
+		this.req.headers({
 			"x-rapidapi-host": "microsoft-azure-microsoft-computer-vision-v1.p.rapidapi.com",
 			"x-rapidapi-key": "65772e1677msh18c5c84e580c878p1d6825jsn6b909c923f83",
 			"content-type": "application/json",
 			"accept": "application/json"
 		});
-		req.type("json");
-		req.send({
-			"url": "https://upload.wikimedia.org/wikipedia/commons/1/11/Kanye_West_at_the_2009_Tribeca_Film_Festival.jpg"
+		this.req.type("json");
+		console.log("SETUP++END+++++++++++++++++++");
+	}
+	sendUrl(url){
+		console.log("SETUP SENDDDDD URLLLLLLLLLL");
+		this.req.send({
+			"url": url
 		});
-		req.end(function (res) {
-			console.log(" =================================res======================================");
-			console.log(res);
-			if (res.error) throw new Error(res.error);
-			console.log(res.body);
-			return res.body;
-		});
+		return this.req;
 	}
 	sendFile(url){
 		this.req.send({
@@ -38,7 +33,6 @@ class imageRecognition {
 		});
 		this.req.end(function (res) {
 			if (res.error) throw new Error(res.error);
-			console.log(res.body);
 			return res.body;
 		});
 	}
