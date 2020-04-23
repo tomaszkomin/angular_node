@@ -3,4 +3,6 @@ export interface PostModel {
     title: string;
 	content: string;
 	imageUrl?: string | Blob | File;
+	tags?: [{}];
+	description?: [{}]
 }

@@ -57,14 +57,6 @@ export class PostService {
 			postData
 		)
 		.subscribe((response) => {
-			const post: PostModel = {
-				id: response.post.id,
-				title: response.post.title,
-				content: response.post.content,
-				imageUrl : response.post.imageUrl
-			}
-			this.posts.push(post);
-			this.postsUpdated$.next([...this.posts]);
 			this.router.navigate(['/']);
 		});
 	}
@@ -79,7 +71,8 @@ export class PostService {
 			postData.append("title", post.title);
 			postData.append("content", post.content);
 			postData.append("image", post.imageUrl,post.title);
-		} else {
+		}
+		else {
 			postData  = {
 				id: id,
 				title: post.title,
@@ -91,18 +84,6 @@ export class PostService {
 		this.httpClient
 			.put(API_URL + id , postData )
 			.subscribe((result) => {
-				const updatedPosts = [...this.posts];
-				const updatedIndex = updatedPosts.findIndex( updatedPost => updatedPost.id === id);
-				console.log(postData)
-				const post: PostModel = {
-					id : postData.id,
-					title : postData.title,
-					content : postData.content,
-					imageUrl : postData.imageUrl
-				}
-				updatedPosts[updatedIndex] = post;
-				this.posts = updatedPosts;
-				this.postsUpdated$.next({posts: [...this.posts] , postCount: 1346});
 				this.router.navigate(['/']);
 			});
 	}

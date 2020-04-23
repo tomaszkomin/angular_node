@@ -1,3 +1,4 @@
+const checkAuth = require('./../middleware/check-auth');
 const express = require('express');
 const router = express.Router();
 const multer = require('multer'); //parser for filetype uploads
@@ -68,40 +69,45 @@ router.get("/:id", (req, res, next) =>{
   })
 })
 // add Post
-router.post("", multer({storage:storageConfig}).single("image"), (req, res, next) => {
+router.post("", checkAuth, multer({storage:storageConfig}).single("image"), (req, res, next) => {
 
 	const url = req.protocol + '://' + req.get("host");
-	const testImageUrl = "https://i1.jbzd.com.pl/contents/2020/04/normal/MnNQIMU9GylxTcztWMP9b2EpmI23w18x.jpg";
-	//const tags = [{"tag" : "test tag v1.2"}];
-	let tagsFromImage;
-	const imageRecognition = new ImageRecognitionApp()
-	console.log("api started");
-	imageRecognition.sendUrl(testImageUrl).end(function (res) {
-		console.log("starting recognition api")
-		if (res.error) throw new Error(res.error);
-		tagsFromImage  = res.body;
-		console.log("tags inside");
-		console.log(tagsFromImage);
-		const posts = new Posts({
-			title: req.body.title,
-			content: req.body.content,
-			imageUrl: url + '/images/' +  req.file.filename,
-			tags: tagsFromImage
-		});
-		console.log(posts);
-		posts.save().then((result) => {
-			res.status(201).json({
-				message: "Post added success!!!",
-				post : {
-					...result,
-					id: result._id,
-				}
-			});
+	const testImageUrl = "https://ocdn.eu/pulscms-transforms/1/XStktkqTURBXy82ZGNlMjY4NWNiOTE4ZTY2MzcxNzhiZDFkNTA0MTM3Zi5qcGVnkZMCAM0B5A";
+	const imageRecognition = new ImageRecognitionApp();
+
+	const fs = require('fs');
+	let dataStream;
+	try {
+		 dataStream = fs.readFileSync('backend/images/'+ req.file.filename, 'utf8');
+	} catch(e) {
+		console.log('Error:', e.stack);
+	}
+	//@to do add promise here
+	//let tagsFromImage = imageRecognition.sendUrl(testImageUrl);
+	//let tagsFromImage = imageRecognition.sendFile(multer({storage:storageConfig}).single("image"));
+	let tagsFromImage = [{}];
+	console.log("RESULT COMPLETE");
+	console.log(tagsFromImage)
+	const posts = new Posts({
+		title: req.body.title,
+		content: req.body.content,
+		imageUrl: url + '/images/' +  req.file.filename,
+		tags: tagsFromImage
+	});
+	console.log(posts);
+	posts.save().then((result) => {
+		res.status(201).json({
+			message: "Post added success!!!",
+			post : {
+				...result,
+				id: result._id,
+			}
 		});
 	});
 });
 // update Post
-router.put("/:id", multer({storage:storageConfig}).single("image"), (req, res, next) => {
+router.put("/:id", checkAuth, multer({storage:storageConfig}).single("image"), (req, res, next) => {
+
 
 	let imageUrl = req.body.imageUrl;
 	if(req.file){
@@ -122,7 +128,7 @@ router.put("/:id", multer({storage:storageConfig}).single("image"), (req, res, n
 		})
 	})
 });
-router.delete("/:id", (req,res,next) => {
+router.delete("/:id", checkAuth,  (req,res,next) => {
 	Posts.deleteOne( {_id:req.params.id} ).then(() => {
 		console.log("POST DELETED");
 		res.status(200).json({message: "Post Deleted"});

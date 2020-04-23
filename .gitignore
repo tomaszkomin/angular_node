@@ -41,6 +41,9 @@ yarn-error.log
 testem.log
 /typings
 
+# Images uploaded to backend
+/backend/images
+
 # System Files
 .DS_Store
 Thumbs.db

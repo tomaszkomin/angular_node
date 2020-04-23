@@ -12,7 +12,7 @@ export class PostListComponent implements OnInit {
     public isLoading = false;
 	public posts: PostModel[] = [];
 	public totalSize: number;
-	public pageSizeOptions:number[] = [3,4,10,20];
+	public pageSizeOptions:number[] = [50,150,100];
 	public pageSize:number = this.pageSizeOptions[0];
 	public currentPage:number;
 	private subscription: Subscription;
@@ -35,6 +35,7 @@ export class PostListComponent implements OnInit {
       this.subscription.unsubscribe();
     }
     public onDelete( id: string ) {
+		this.isLoading = true;
       	this.postsService.deletePost(id).subscribe( (result) =>{
 			  this.postsService.getPosts(this.pageSize , this.currentPage);
 	   	})
