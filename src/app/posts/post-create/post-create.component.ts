@@ -45,14 +45,15 @@ export class PostCreateComponent implements OnInit {
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
         this.isLoading = true;
-        this.postsService.getPost(this.postId).subscribe( (res: {message: string , post: {_id: string , title: string , content: string, imageUrl:any}}) => {
+        this.postsService.getPost(this.postId).subscribe( (res: {message: string , post: {_id: string , title: string , content: string, imageUrl:any, createdBy:string}}) => {
           this.isLoading = false;
           const postFromDB = res.post;
           this.post = {
              id: postFromDB._id ,
              title: postFromDB.title ,
 			 content : postFromDB.content,
-			 imageUrl :  postFromDB.imageUrl
+			 imageUrl : postFromDB.imageUrl,
+			 createdBy: postFromDB.createdBy
           };
           this.form.setValue({
             title: this.post.title,
@@ -75,7 +76,8 @@ export class PostCreateComponent implements OnInit {
     const post = {
 		title: this.form.value.title,
 		content : this.form.value.content,
-		imageUrl : this.form.value.image
+		imageUrl : this.form.value.image,
+		createdBy: null //filled by server side
     };
     if (this.mode === 'create') {
        this.postsService.addPost(post);

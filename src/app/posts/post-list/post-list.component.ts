@@ -1,38 +1,51 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { PostModel } from './../post.model';
 import { PostService } from './../post.service';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
+import { AuthService } from 'src/app/auth/auth.service';
 @Component({
   selector: 'app-post-list',
   templateUrl: './post-list.component.html',
   styleUrls: ['./post-list.component.sass']
 })
-export class PostListComponent implements OnInit {
+export class PostListComponent implements OnInit, OnDestroy {
     public isLoading = false;
 	public posts: PostModel[] = [];
 	public totalSize: number;
 	public pageSizeOptions:number[] = [50,150,100];
 	public pageSize:number = this.pageSizeOptions[0];
 	public currentPage:number;
+	public userAuth:boolean = false;
+	public userId:string;
 	private subscription: Subscription;
-
+	private authStatus$: Subscription;
     constructor(
-      	private postsService: PostService
+		  private postsService: PostService,
+		  private authService: AuthService
     ) {}
     ngOnInit(): void {
-		console.log("NG ON INIT POST LIST COMPONENT");
 		this.isLoading = true;
 		this.postsService.getPosts(this.pageSize,this.currentPage);
-		this.subscription = this.postsService.getPostUpdateListener()
+		this.userId = this.authService.getUserId();
+		this.subscription = this.postsService
+		.getPostUpdateListener()
         .subscribe((result : { posts: PostModel[] , postCount: number }) => {
 			this.posts = result.posts;
 			this.totalSize = result.postCount;
 			this.isLoading = false;
-        });
+		});
+		this.userAuth = this.authService.getIsAuth();
+		this.authStatus$ = this.authService
+			.getAuthStatusListener()
+			.subscribe((isAuthenticated) => {
+				this.userAuth = isAuthenticated;
+				this.userId = this.authService.getUserId();
+			});
     }
     ngOnDestroy(): void {
-      this.subscription.unsubscribe();
+	  this.subscription.unsubscribe();
+	  this.authStatus$.unsubscribe();
     }
     public onDelete( id: string ) {
 		this.isLoading = true;

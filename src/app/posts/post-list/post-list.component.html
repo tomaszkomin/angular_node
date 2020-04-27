@@ -4,7 +4,7 @@
 		<mat-expansion-panel-header>
 			<h3>{{post.title}}</h3>
 			<span class="spacer"></span>
-			<button mat-button mat-raised-button [routerLink]="['/edit' , post.id]">
+			<button *ngIf="userAuth && userId == post.createdBy" mat-button mat-raised-button [routerLink]="['/edit' , post.id]">
 				Quick edit
 			</button>
 
@@ -13,8 +13,8 @@
 			<img [src]="post.imageUrl" [alt]="post.title">
 		</div>
 		<p>{{post.content}}</p>
-		<mat-action-row>
-			<button mat-button mat-raised-button color="primary" [routerLink]="['/edit' , post.id]">
+		<mat-action-row *ngIf="userAuth && userId == post.createdBy">
+			<button mat-button mat-raised-button mat-raised-button  [routerLink]="['/edit' , post.id]">
 				Edit that shiieeet
 			</button>
 			<button mat-button mat-raised-button color="warn" (click) ="onDelete(post.id)" >

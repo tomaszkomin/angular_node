@@ -72,29 +72,29 @@ router.get("/:id", (req, res, next) =>{
 router.post("", checkAuth, multer({storage:storageConfig}).single("image"), (req, res, next) => {
 
 	const url = req.protocol + '://' + req.get("host");
-	const testImageUrl = "https://ocdn.eu/pulscms-transforms/1/XStktkqTURBXy82ZGNlMjY4NWNiOTE4ZTY2MzcxNzhiZDFkNTA0MTM3Zi5qcGVnkZMCAM0B5A";
-	const imageRecognition = new ImageRecognitionApp();
-
-	const fs = require('fs');
-	let dataStream;
-	try {
-		 dataStream = fs.readFileSync('backend/images/'+ req.file.filename, 'utf8');
-	} catch(e) {
-		console.log('Error:', e.stack);
-	}
+	//const testImageUrl = "https://ocdn.eu/pulscms-transforms/1/XStktkqTURBXy82ZGNlMjY4NWNiOTE4ZTY2MzcxNzhiZDFkNTA0MTM3Zi5qcGVnkZMCAM0B5A";
+	//const imageRecognition = new ImageRecognitionApp();
+	// const fs = require('fs');
+	// let dataStream;
+	// try {
+	// 	 dataStream = fs.readFileSync('backend/images/'+ req.file.filename, 'utf8');
+	// } catch(e) {
+	// 	console.log('Error:', e.stack);
+	// }
 	//@to do add promise here
 	//let tagsFromImage = imageRecognition.sendUrl(testImageUrl);
 	//let tagsFromImage = imageRecognition.sendFile(multer({storage:storageConfig}).single("image"));
 	let tagsFromImage = [{}];
-	console.log("RESULT COMPLETE");
-	console.log(tagsFromImage)
+	// console.log("RESULT COMPLETE");
+	// console.log(tagsFromImage)
+
 	const posts = new Posts({
 		title: req.body.title,
 		content: req.body.content,
 		imageUrl: url + '/images/' +  req.file.filename,
-		tags: tagsFromImage
+		tags: tagsFromImage,
+		createdBy: req.userData.userId
 	});
-	console.log(posts);
 	posts.save().then((result) => {
 		res.status(201).json({
 			message: "Post added success!!!",
@@ -108,7 +108,6 @@ router.post("", checkAuth, multer({storage:storageConfig}).single("image"), (req
 // update Post
 router.put("/:id", checkAuth, multer({storage:storageConfig}).single("image"), (req, res, next) => {
 
-
 	let imageUrl = req.body.imageUrl;
 	if(req.file){
 		const url = req.protocol + '://' + req.get("host");
@@ -121,18 +120,28 @@ router.put("/:id", checkAuth, multer({storage:storageConfig}).single("image"), (
 		content: req.body.content,
 		imageUrl: imageUrl
 	})
-	Posts.updateOne( {_id: id}, updatedPost ).then( (result) => {
-		console.log("Post id: " +id+ "updated");
-		res.status(200).json({
-		message: `Post id: ${id} updated`
+	Posts.updateOne({_id: id, createdBy: req.userData.userId}, updatedPost)
+		.then((result) => {
+			console.log(result);
+			if(result.nModified > 0){
+				res.status(200).json({message: `Post id: ${id} updated`})
+			}
+			else{
+				res.status(401).json({message: `Post not updated`})
+			}
 		})
-	})
 });
 router.delete("/:id", checkAuth,  (req,res,next) => {
-	Posts.deleteOne( {_id:req.params.id} ).then(() => {
-		console.log("POST DELETED");
-		res.status(200).json({message: "Post Deleted"});
-	})
+	Posts.deleteOne({_id:req.params.id, createdBy: req.userData.userId})
+		.then((result) => {
+			console.log(result);
+			if(result.n > 0){
+				res.status(200).json({message: "Post Deleted"});
+			}
+			else{
+				res.status(401).json({message: `Post not Deleted`})
+			}
+		})
 });
 
 module.exports = router;

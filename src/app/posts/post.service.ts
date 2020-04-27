@@ -1,12 +1,11 @@
+import { environment } from './../../environments/environment';
+const API_URL = environment.api_url + '/posts/';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Subject} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PostModel } from './post.model';
-import { Subject} from 'rxjs';
-import { environment } from './../../environments/environment';
 import { Router } from '@angular/router';
-import { Title } from '@angular/platform-browser';
-const API_URL = environment.api_url + '/posts/';
 
 @Injectable({
 	providedIn: 'root'
@@ -22,11 +21,11 @@ export class PostService {
 
 	public getPosts( pageSize:number , currentPage:number  ) {
 		const queryParams = `?pageSize=${pageSize}&page=${currentPage}`;
-		this.httpClient.get<{ message: string, posts: any , postCount:number }>(API_URL + queryParams)
+		return this.httpClient.get<{ message: string, posts: any , postCount:number }>(API_URL + queryParams)
 			.pipe(
 				map( response => {
 					return {
-						posts : response.posts.map( (post) => {
+						posts : response.posts.map((post) => {
 							return {
 								...post,
 								id: post._id
@@ -45,13 +44,10 @@ export class PostService {
 		return this.postsUpdated$.asObservable();
 	}
 	public addPost(post: PostModel) {
-		const postData = new FormData();	//allows sendingBLOB
-
+		const postData = new FormData();//allows sendingBLOB
 		postData.append("title", post.title);
 		postData.append("content", post.content);
 		postData.append("image", post.imageUrl, post.title);
-		console.log(postData);
-		//this.httpClient.post<{ message: string , post : PostModel}>(
 		this.httpClient.post<{message: string , post: PostModel}>(
 			API_URL,
 			postData
@@ -77,7 +73,8 @@ export class PostService {
 				id: id,
 				title: post.title,
 				content: post.content,
-				imageUrl : post.imageUrl
+				imageUrl : post.imageUrl,
+				createdBy: null //filled on server side
 			}
 		}
 
