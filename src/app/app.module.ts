@@ -3,15 +3,6 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner/';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatDialogModule } from '@angular/material/dialog';
 
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
@@ -24,13 +15,14 @@ import { HeaderComponent } from './header/header.component';
 import { PostListComponent } from './posts/post-list/post-list.component';
 import { ErrorInterceptor } from './error.interceptor';
 import { ErrorComponent } from './error/error.component';
+import { MaterialModule } from './material/material.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     PostCreateComponent,
-    HeaderComponent,
     PostListComponent,
+    HeaderComponent,
     LoginComponent,
     SignupComponent,
     ErrorComponent
@@ -41,17 +33,9 @@ import { ErrorComponent } from './error/error.component';
     BrowserAnimationsModule,
 	ReactiveFormsModule,
 	FormsModule,
-    AppRoutingModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatExpansionModule,
-    MatDividerModule,
-	MatProgressSpinnerModule,
-	MatPaginatorModule,
-	MatDialogModule
+	AppRoutingModule,
+	MaterialModule
+
   ],
   providers: [
 	PostService,{
