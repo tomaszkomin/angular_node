@@ -51,6 +51,11 @@ router.get("", (req, res, next) => {
 				postCount : postCount
 			})
 		})
+		.catch((error) => {
+			res.status(500).json({
+				message: "Fetching post failed!"
+			})
+		})
 });
 // get post by @id
 router.get("/:id", (req, res, next) =>{
@@ -103,6 +108,11 @@ router.post("", checkAuth, multer({storage:storageConfig}).single("image"), (req
 				id: result._id,
 			}
 		});
+	})
+	.catch(error => {
+		res.status(500).json({
+			message: "Crate Post Failed"
+		})
 	});
 });
 // update Post
@@ -129,6 +139,9 @@ router.put("/:id", checkAuth, multer({storage:storageConfig}).single("image"), (
 			else{
 				res.status(401).json({message: `Post not updated`})
 			}
+		})
+		.catch((error) =>{
+			res.status(500).json({message: "Post update failed"})
 		})
 });
 router.delete("/:id", checkAuth,  (req,res,next) => {
