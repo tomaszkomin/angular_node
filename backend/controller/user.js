@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken");
 const User = require("./../models/user");
 
+const EXPIRATION_TIME = 3600;
+
 exports.createUser = (req,res,next) => {
 	console.log("signup action v.2 controller");
 	bcrypt.hash(req.body.password, 10 ).then((hash) => {
