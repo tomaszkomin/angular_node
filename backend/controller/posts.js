@@ -105,7 +105,7 @@ exports.updatePost = (req, res, next) => {
 	Posts.updateOne({_id: id, createdBy: req.userData.userId}, updatedPost)
 		.then((result) => {
 			console.log(result);
-			if(result.nModified > 0){
+			if(result.n > 0){
 				res.status(200).json({message: `Post id: ${id} updated`})
 			}
 			else{
