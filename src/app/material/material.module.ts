@@ -25,7 +25,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatDividerModule,
 	MatProgressSpinnerModule,
 	MatPaginatorModule,
-	MatDialogModule
+	MatDialogModule,
   ],
   exports: [
 	MatInputModule,

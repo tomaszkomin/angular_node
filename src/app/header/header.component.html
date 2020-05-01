@@ -10,12 +10,12 @@
         </a>
 	</li>
 	<li *ngIf="!userAuth">
-		<a routerLink="/login" routerLinkActive="mat-accent" mat-button >
+		<a routerLink="auth/login" routerLinkActive="mat-accent" mat-button >
 			Login
 		</a>
 	</li>
 	<li *ngIf="!userAuth">
-		<a routerLink="/signUp" routerLinkActive="mat-accent" mat-button >
+		<a routerLink="auth/signUp" routerLinkActive="mat-accent" mat-button >
 			Sign Up
 		</a>
 	</li>
@@ -26,5 +26,7 @@
 	</li>
   </ul>
 </mat-toolbar>
-<h4 *ngIf="authService.username$ | async">Logged In: {{authService.username$|async}}</h4>
+	<h4 *ngIf="authService.username$ | async">
+		Logged as: {{authService.username$|async}}
+	</h4>
 <mat-divider></mat-divider>

@@ -1,0 +1,6 @@
+{
+	"env" : {
+		"CONNECTION_STRING" : "tomaszkomin:dupadupa123@cluster0-2e7xh.mongodb.net",
+		"JWT_KEY" : "Secret_key_very_long_blabalablablab_daskdnoisfnhidjoiugfdiuhobdfghudsbuhidofughddd"
+	}
+}

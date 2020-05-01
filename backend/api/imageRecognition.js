@@ -44,8 +44,7 @@ class imageRecognition {
 		.catch((error)=>{
 			console.log(error)
 		})
-
-		}
+	}
 }
 module.exports = imageRecognition;
 

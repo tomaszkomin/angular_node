@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken");
 const User = require("./../models/user");
 
@@ -17,6 +17,7 @@ exports.createUser = (req,res,next) => {
 				result: result
 			})
 		}).catch(error => {
+			console.log(error);
 			res.status(500).json({
 					message: "Invalid authentication credentials!"
 				}
@@ -44,7 +45,7 @@ exports.userLogin = (req,res,next) => {
 			}
 			const token = jwt.sign(
 				{ email: userFetched.email, userId: userFetched._id },
-				enviroment.secret_salt,
+				process.env.JWT_KEY,
 				{ expiresIn: EXPIRATION_TIME}
 			)
 			return res.status(200).json({

@@ -50,26 +50,17 @@ exports.getPost = (req, res, next) =>{
 exports.addPost = (req, res, next) => {
 
 	const url = req.protocol + '://' + req.get("host");
-	//const testImageUrl = "https://ocdn.eu/pulscms-transforms/1/XStktkqTURBXy82ZGNlMjY4NWNiOTE4ZTY2MzcxNzhiZDFkNTA0MTM3Zi5qcGVnkZMCAM0B5A";
-	//const imageRecognition = new ImageRecognitionApp();
-	// const fs = require('fs');
-	// let dataStream;
-	// try {
-	// 	 dataStream = fs.readFileSync('backend/images/'+ req.file.filename, 'utf8');
-	// } catch(e) {
-	// 	console.log('Error:', e.stack);
-	// }
-	//@to do add promise here
-	//let tagsFromImage = imageRecognition.sendUrl(testImageUrl);
-	//let tagsFromImage = imageRecognition.sendFile(multer({storage:storageConfig}).single("image"));
+	const imageUrl = url + '/images/' + req.file.filename;
+	console.log("============testImageUrl=============");
+	console.log(testImageUrl);
+	const imageRecognition = new ImageRecognitionApp();
+	let tagsFromImage = imageRecognition.sendUrl(imageUrl);
 	let tagsFromImage = [{}];
-	// console.log("RESULT COMPLETE");
-	// console.log(tagsFromImage)
 
 	const posts = new Posts({
 		title: req.body.title,
 		content: req.body.content,
-		imageUrl: url + '/images/' +  req.file.filename,
+		imageUrl: imageUrl,
 		tags: tagsFromImage,
 		createdBy: req.userData.userId
 	});
@@ -96,15 +87,18 @@ exports.updatePost = (req, res, next) => {
 		imageUrl = url + "/images/" + req.file.filename;
 	};
 	const id = req.params.id;
+	const imageRecognition = new ImageRecognitionApp();
+	let tagsFromImage = imageRecognition.sendUrl(imageUrl);
+	let tagsFromImage = [{}];
 	const updatedPost = new Posts({
 		_id: id,
 		title: req.body.title,
 		content: req.body.content,
-		imageUrl: imageUrl
+		imageUrl: imageUrl,
+		tags: tagsFromImage
 	})
 	Posts.updateOne({_id: id, createdBy: req.userData.userId}, updatedPost)
 		.then((result) => {
-			console.log(result);
 			if(result.n > 0){
 				res.status(200).json({message: `Post id: ${id} updated`})
 			}

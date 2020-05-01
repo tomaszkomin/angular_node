@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MaterialModule } from './material/material.module';
-import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
 
 import { AuthInterceptor } from './auth/auth.interceptor';
@@ -24,7 +23,6 @@ import { ErrorComponent } from './error/error.component';
     BrowserModule,
     HttpClientModule,
     BrowserAnimationsModule,
-	AuthModule,
 	AppRoutingModule,
 	MaterialModule,
 	PostsModule

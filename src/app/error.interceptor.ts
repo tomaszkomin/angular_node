@@ -11,14 +11,11 @@ export class ErrorInterceptor implements HttpInterceptor{
 		return next.handle(req).pipe(
 			catchError((errorRes : HttpErrorResponse) => {
 				console.log(errorRes);
-				console.log(errorRes.error);
-				console.log(errorRes.error.message);
 				let errorMessage = "an unknown error ocurred!"
 				if(errorRes.error.message){
 					errorMessage = errorRes.error.message;
 				}
 				this.dialog.open(ErrorComponent,{ data: {message : errorMessage}}) ;
-				console.log("AFTER MAT DIALOG COMPOINTETNTE CALL");
 				return throwError(errorRes)
 			})
 		)

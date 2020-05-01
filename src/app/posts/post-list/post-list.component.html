@@ -4,13 +4,15 @@
 		<mat-expansion-panel-header>
 			<h3>{{post.title}}</h3>
 			<span class="spacer"></span>
-			<button *ngIf="userAuth && userId == post.createdBy" mat-button mat-raised-button [routerLink]="['/edit' , post.id]">
+			<a *ngIf="userAuth && userId == post.createdBy" mat-button mat-raised-button [routerLink]="['/edit' , post.id]">
 				Quick edit
-			</button>
-
+			</a>
 		</mat-expansion-panel-header>
 		<div class="post-image">
 			<img [src]="post.imageUrl" [alt]="post.title">
+			<ul class="tags" *ngFor="let tags of post.tags">
+				<li> tagged: {{tags}} </li>
+			</ul>
 		</div>
 		<p>{{post.content}}</p>
 		<mat-action-row *ngIf="userAuth && userId == post.createdBy">

@@ -18,18 +18,28 @@
         <mat-error *ngIf="form.get('content').invalid">CONTENT ERORR: content is missing</mat-error>
       </mat-form-field>
       <div>
-        <button mat-stroked-button type="button" (click)="filePickerInput.click()">Add Image</button>
+        <button mat-stroked-button type="button" (click)="filePickerInput.click()">
+			<span *ngIf="mode==='create' else update">Add Image</span>
+			<ng-template #update>
+				<span >Update Image?</span>
+			</ng-template>
+		</button>
+		<span *ngIf ="mode ==='edit' && !(imageUrlEncoded && form.get('image').valid )">
+			<div class="image-preview" >
+				<img [src]="post.imageUrl" [alt]="post.tags" >
+			</div>
+		</span>
         <input type="file" #filePickerInput (change)="onImageSet($event)">
       </div>
       <div class="image-preview" *ngIf="imageUrlEncoded && form.get('image').valid">
         <img [src]="imageUrlEncoded" [alt]="form.get('title').value">
       </div>
-      <button
-          mat-flat-button
-          color="primary"
-          type="submit">
-        Save Post
-      </button>
+      	<button
+			mat-flat-button
+			color="primary"
+			type="submit">
+			{{mode === 'create' ? 'Add': 'Update'}}
+		</button>
     <mat-error *ngIf="this.form.status !== 'VALID'">{{error}}</mat-error>
 	</form>
 </mat-card>

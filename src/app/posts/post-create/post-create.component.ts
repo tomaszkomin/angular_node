@@ -17,7 +17,7 @@ export class PostCreateComponent implements OnInit {
   public form: FormGroup;
   public imageUrlEncoded: string | ArrayBuffer;
 
-  private mode = 'create'; // create or edit
+  public mode = 'create'; // create or edit
   private postId: string;
 
   constructor(
@@ -88,16 +88,13 @@ export class PostCreateComponent implements OnInit {
     this.isLoading = false;
   }
   public onImageSet(event: Event) {
-    console.log(event);
     const file = (event.target as HTMLInputElement).files[0];
     const fileReader = new FileReader();
 
     this.form.patchValue({image : file});
     this.form.get('image').updateValueAndValidity();
-    console.log(file);
     fileReader.onload = () => {
       this.imageUrlEncoded = fileReader.result;
-      console.log(this.imageUrlEncoded);
     };
     fileReader.readAsDataURL(file);
   }

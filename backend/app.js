@@ -1,5 +1,5 @@
-const CONNECTION_STRING = 'mongodb+srv://tomaszkomin:dupadupa123@cluster0-2e7xh.mongodb.net/mean_course_database_app?w=majority';
-
+const CONNECTION_STRING = 'mongodb+srv://' + "tomaszkomin:dupadupa123@cluster0-2e7xh.mongodb.net" + '/mean_course_database_app?w=majority' ;
+console.log(CONNECTION_STRING);
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser= require('body-parser');
@@ -16,10 +16,10 @@ mongoose.connect(CONNECTION_STRING,{
   console.log('CONNECTED');
   console.log(casual.city  + ' ' +  casual.country);
 }).catch((error) => {
-  console.log("CONNENCTION TO MONGO DB ERROR 413");
+  console.log(error);
 })
 
-app.use("/images", express.static(path.join("backend","images")));
+app.use("/images", express.static(path.join("images")));
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin','*');
 	res.setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -31,5 +31,4 @@ app.use(bodyParser.json());
 
 app.use("/api/posts", postRouters);
 app.use("/api/user", userRouters);
-
 module.exports = app;
