@@ -80,12 +80,19 @@ export class PostCreateComponent implements OnInit {
 		createdBy: null //filled by server side
     };
     if (this.mode === 'create') {
-       this.postsService.addPost(post);
+	   this.postsService.addPost(post).subscribe((response) => {
+			this.reloadForm();
+	   });
     } else {
-       this.postsService.updatePost({...post, id: this.postId});
+	   this.postsService.updatePost({...post, id: this.postId}).subscribe((result) => {
+			this.reloadForm();
+	   });
     }
-    this.form.reset();
-    this.isLoading = false;
+  }
+  private reloadForm(){
+	this.form.reset();
+	this.isLoading = false;
+   	this.router.navigate(['/']);
   }
   public onImageSet(event: Event) {
     const file = (event.target as HTMLInputElement).files[0];

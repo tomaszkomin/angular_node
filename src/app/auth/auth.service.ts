@@ -29,10 +29,8 @@ export class AuthService{
 		this.httpClient.post(API_URL + "signup", authData)
 			.subscribe(()=>{
 				this.authStatus$.next(true);
-				console.log("create auth service");
 				this.router.navigate(["/"]);
 			}, error =>{
-				console.log("erorr auth service");
 				this.authStatus$.next(false);
 			});
 	}
@@ -89,7 +87,6 @@ export class AuthService{
 		return this.userId;
 	}
 	public getUsername(){
-		console.log("=============get username=============");
 		return this.username;
 	}
 	private getAuthLogin(){
@@ -121,7 +118,6 @@ export class AuthService{
 		localStorage.removeItem('username');
 	}
 	public AutoLogin(){
-		console.log("AUTO LOGIN")
 		const authLogin = this.getAuthLogin();
 		if(authLogin){
 			const now = new Date();

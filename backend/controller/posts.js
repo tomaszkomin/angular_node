@@ -47,16 +47,21 @@ exports.getPost = (req, res, next) =>{
 	}
   })
 }
-exports.addPost = (req, res, next) => {
-
+exports.addPost = async (req, res, next) => {
 	const url = req.protocol + '://' + req.get("host");
-	const imageUrl = url + '/images/' + req.file.filename;
-	console.log("============testImageUrl=============");
-	console.log(testImageUrl);
+	let imageUrl = url + '/images/' + req.file.filename;
 	const imageRecognition = new ImageRecognitionApp();
-	let tagsFromImage = imageRecognition.sendUrl(imageUrl);
-	let tagsFromImage = [{}];
-
+	let tagsFromImage  = {}
+	try{
+		const imageApiResult = await imageRecognition.sendUrl(imageUrl);
+		console.log(imageApiResult)
+		tagsFromImage = imageApiResult.description ? imageApiResult.description : 'Image URL'+imageApiResult+' is not accessible';
+	}
+	catch(error){
+		tagsFromImage = { error: "image recognition service fail" };
+		console.log("ERROR CAUGHT");
+		console.log(error);
+	}
 	const posts = new Posts({
 		title: req.body.title,
 		content: req.body.content,
@@ -72,24 +77,29 @@ exports.addPost = (req, res, next) => {
 				id: result._id,
 			}
 		});
-	})
-	.catch(error => {
+	}).catch(error => {
+		console.log(error);
 		res.status(500).json({
+
 			message: "Crate Post Failed"
 		})
 	});
 }
-exports.updatePost = (req, res, next) => {
+exports.updatePost = async (req, res, next) => {
 
 	let imageUrl = req.body.imageUrl;
 	if(req.file){
 		const url = req.protocol + '://' + req.get("host");
 		imageUrl = url + "/images/" + req.file.filename;
+
 	};
 	const id = req.params.id;
 	const imageRecognition = new ImageRecognitionApp();
-	let tagsFromImage = imageRecognition.sendUrl(imageUrl);
-	let tagsFromImage = [{}];
+	let tagsFromImage  = {};
+	const imageApiResult = await imageRecognition.sendUrl(imageUrl);
+	tagsFromImage = imageApiResult.description ? imageApiResult.description : 'Image URL is not accessible';
+	if (res.error) throw new Error(res.error);
+
 	const updatedPost = new Posts({
 		_id: id,
 		title: req.body.title,
@@ -109,11 +119,11 @@ exports.updatePost = (req, res, next) => {
 		.catch((error) =>{
 			res.status(500).json({message: "Post update failed"})
 		})
+
 }
 exports.deletePost = (req, res, next) => {
 	Posts.deleteOne({_id:req.params.id, createdBy: req.userData.userId})
 		.then((result) => {
-			console.log(result);
 			if(result.n > 0){
 				res.status(200).json({message: "Post Deleted"});
 			}

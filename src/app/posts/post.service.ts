@@ -48,13 +48,10 @@ export class PostService {
 		postData.append("title", post.title);
 		postData.append("content", post.content);
 		postData.append("image", post.imageUrl, post.title);
-		this.httpClient.post<{message: string , post: PostModel}>(
+		return this.httpClient.post<{message: string , post: PostModel}>(
 			API_URL,
 			postData
 		)
-		.subscribe((response) => {
-			this.router.navigate(['/']);
-		});
 	}
 	public updatePost(post: PostModel) {
 		const id = post.id;
@@ -78,11 +75,7 @@ export class PostService {
 			}
 		}
 
-		this.httpClient
-			.put(API_URL + id , postData )
-			.subscribe((result) => {
-				this.router.navigate(['/']);
-			});
+		return this.httpClient.put(API_URL + id , postData );
 	}
 	public deletePost(postId: string ) {
 		return this.httpClient.delete(API_URL + `${postId}`)
